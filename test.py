@@ -15,8 +15,8 @@ level2_file = 'test_data/2024-08-02_00-04-08_lv2.csv'
 #####  END OPTIONS  #####
 
 ### Import reader
-import readers
-import plotters
+from src import readers
+from src import plotters
 
 # Test reader 1
 print('Testing reader 1...')
@@ -32,6 +32,7 @@ data, heights = readers.read_level_2(level2_file)
 print('Data shape', data.shape)
 print('First three rows:\n', data[:3])
 print('Heights:\n', heights)
+print('Heights size:', heights.size)
 
 # Test the bands plotter
 plotters.plot_bands(data, level1_file)
