@@ -62,7 +62,7 @@ for f1, f2 in zip(lev1_files, lev2_files):
         continue
 
     # Filter level 1 data
-    filtered_data1, qc1 = filter(data1, sigma=1.5)
+    filtered_data1, qc1 = filter(data1, sigma=2.0)
 
     # Collapse qc into a 1D array
     qc1 = ~np.any(qc1, axis=0)
