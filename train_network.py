@@ -20,7 +20,7 @@ batch_size = 100
 split = 0.15
 
 # Model to train (temp, rh, liquid, vapor)
-model_type = 'liquid'
+model_type = 'temp'
 model_version = 2
 
 # Location of the training data
