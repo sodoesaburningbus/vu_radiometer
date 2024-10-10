@@ -95,13 +95,9 @@ for f1, f2 in zip(lev1_files, lev2_files):
         filtered_data1 = filtered_data1[:-1][all_qc]
     
     # Store level 1 brightness temperature as inputs
-    input_dummy = filtered_data1[1:5]+filtered_data1[9:]
-    print(input_dummy.shape)
+    # Slicing out the times, rainfall, and QC flags
+    input_dummy = np.concatenate((filtered_data1[:,1:5],filtered_data1[:,9:]), axis=1)
     inputs.append(input_dummy)
-
-    print(temp.shape)
-    print(temp)
-    exit()
 
     # Store level 2 variables as targets (each one separately)
     temp_target.append(temp)

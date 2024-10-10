@@ -11,7 +11,7 @@
 ##### START OPTIONS #####
 
 # Number of epochs
-n_epochs = 1000
+n_epochs = 500
 
 # Batch size
 batch_size = 100
@@ -20,16 +20,20 @@ batch_size = 100
 split = 0.15
 
 # Model to train (temp, rh, liquid, vapor)
-model_type = 'rh'
+model_type = 'liquid'
+model_version = 2
 
 # Location of the training data
 input_dir = '../training_data/hotfix'
 
+# Location to save the data normalization
+npath = f'models/{model_type}_norms.npz'
+
 # Location to save the model file
-spath = f'models/{model_type}_network_20241005_v01.pt'
+spath = f'models/{model_type}_network_v{model_version:02d}.pt'
 
 # Location to save the log file
-log_path = f'models/{model_type}_network_training_log_20241005_v01.txt'
+log_path = f'models/{model_type}_network_training_log_v{model_version:02d}.txt'
 
 # Optional seed for reproducibility (None if none)
 seed = 44
@@ -74,6 +78,9 @@ X_train = (X_train-Xsigma)/Xbar
 X_test = (X_test-Xsigma)/Xbar
 y_train = (y_train-ysigma)/ybar
 y_test = (y_test-ysigma)/ybar
+
+# Save the Norms
+np.savez(npath, xbar=Xbar, ybar=ybar, xsigma=Xsigma, ysigma=ysigma)
 
 # Convert to PyTorch Tensors
 # Note the 32bit dtype. Model weights default to float32 and the data must be the same

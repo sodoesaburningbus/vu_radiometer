@@ -21,7 +21,7 @@ class temp_net(nn.Module):
         super(temp_net, self).__init__()
 
         # Define the layers
-        self.layer1 = nn.Linear(45, 90)
+        self.layer1 = nn.Linear(40, 90)
         self.layer2 = nn.Linear(90, 120)
         self.layer3 = nn.Linear(120, 160)
         self.layer4 = nn.Linear(160, 200)
@@ -59,7 +59,7 @@ class rh_net(nn.Module):
         super(rh_net, self).__init__()
 
         # Define the layers
-        self.layer1 = nn.Linear(45, 90)
+        self.layer1 = nn.Linear(40, 90)
         self.layer2 = nn.Linear(90, 120)
         self.layer3 = nn.Linear(120, 160)
         self.layer4 = nn.Linear(160, 200)
