@@ -11,7 +11,7 @@
 ##### START OPTIONS #####
 
 # Number of epochs
-n_epochs = 500
+n_epochs = 200
 
 # Batch size
 batch_size = 100
@@ -20,11 +20,11 @@ batch_size = 100
 split = 0.15
 
 # Model to train (temp, rh, liquid, vapor)
-model_type = 'temp'
-model_version = 2
+model_type = 'vapor'
+model_version = 3
 
 # Location of the training data
-input_dir = '../training_data/hotfix'
+input_dir = 'training_data/hotfix'
 
 # Location to save the data normalization
 npath = f'models/{model_type}_norms.npz'
@@ -71,13 +71,15 @@ print('y_train', y_train.shape)
 # Normalize
 Xbar = np.mean(X_train)
 Xsigma = np.std(X_train)
-ybar = np.mean(y_train)
-ysigma = np.std(y_train)
+ybar = np.mean(y_train, axis=0)
+ysigma = np.std(y_train, axis=0)
 
-X_train = (X_train-Xsigma)/Xbar
-X_test = (X_test-Xsigma)/Xbar
-y_train = (y_train-ysigma)/ybar
-y_test = (y_test-ysigma)/ybar
+X_train = (X_train-Xbar)/Xsigma
+X_test = (X_test-Xbar)/Xsigma
+
+for i in range(ybar.size):
+    y_train[:,i] = (y_train[:,i]-ybar[i])/ysigma[i]
+    y_test[:,i] = (y_test[:,i]-ybar[i])/ysigma[i]
 
 # Save the Norms
 np.savez(npath, xbar=Xbar, ybar=ybar, xsigma=Xsigma, ysigma=ysigma)
@@ -153,13 +155,25 @@ torch.save(model.state_dict(), spath)
 # Unscale validation data to compute final error statistics
 y_pred = model(X_test).detach().numpy()
 y_test = y_test.detach().numpy()
-y_test = (y_test*ybar)+ysigma
-y_pred = (y_pred*ybar)+ysigma
+
+for i in range(ybar.size):
+    y_test[:,i] = (y_test[:,i]*ysigma[i])+ybar[i]
+    y_pred[:,i] = (y_pred[:,i]*ysigma[i])+ybar[i]
 
 # Total RMSE
 rmse = np.sqrt(np.mean((y_pred-y_test)**2))
 mbe = np.mean(y_pred-y_test)
 mae = np.mean(np.abs(y_pred-y_test))
 
-log.write(f'\n\nFinal Stats\nRMSE = {rmse:.3f}\nMBE = {mbe:.3f}\nMAE = {mae:.3f}\nPE = {rmse/ybar*100.0:.3f} %')
+log.write(f'\n\nFinal Stats\nRMSE = {rmse:.3f}\nMBE = {mbe:.3f}\nMAE = {mae:.3f}\nPE = {rmse/np.nanmean(y_test)*100.0} %')
+
+# Add per height errors
+rmse = np.sqrt(np.mean((y_pred-y_test)**2, axis=0))
+mbe = np.mean(y_pred-y_test, axis=0)
+mae = np.mean(np.abs(y_pred-y_test), axis=0)
+log.write(('\n\nHeight'+',{}'*rmse.size).format(*range(1,59)))
+log.write(('\nRMSE'+',{:.02f}'*rmse.size).format(*rmse))
+log.write(('\nMBE'+',{:.02f}'*mbe.size).format(*mbe))
+log.write(('\nMAE'+',{:.02f}'*mae.size).format(*mae))
+
 log.close()
