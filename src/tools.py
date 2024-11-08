@@ -53,13 +53,11 @@ def compute_pblh(temp, vapor, heights):
     for i in range(temp.shape[0]):
 
         # Find height of lowest inversion
-        pblh_dummy = heights[np.arange(heights.size, dtype='int')[lapse[i,:]>0][0]]
+        pblh_dummy = heights[np.arange(heights.size-1, dtype='int')[lapse[i,:]>0][0]]
 
-        # If no inversion exists below 4.5 km (~600 hPa), use the parcel mixing method
+        # If no inversion exists below 4.5 km (~600 hPa), use the maximum gradient in water vapor
         if (pblh_dummy > 4.5):
-            Tv = temp[i,:]*(1.0+0.61*vapor[i,:]) # Wrong because vapor is a density not a mixing ratio
-            pblh_ind = np.arange(heights.size, dtype='int')[Tv[i,1:]>=Tv[i,0]]
-            pblh_dummy = heights[pblh_ind]
+            pblh_dummy = heights[np.nanargmin((vapor[i,1:]-vapor[i,:-1])**2)]
 
         pblh.append(pblh_dummy)
 
@@ -69,6 +67,7 @@ def compute_pblh(temp, vapor, heights):
     return pblh
 
 ### Function to compute water vapor mixing ratio
+### Very experimental
 def get_mixr(temp, vapor, humidity):
 
     # First compute the saturation vapor pressure using the Stefan-Boltzmann formula
@@ -98,6 +97,7 @@ def get_mixr(temp, vapor, humidity):
     return rv
 
 ### Function to compute pressure
+### Very experimental
 def get_pressure(temp, mixr, rh):
 
     # First compute the saturation vapor pressure using the Stefan-Boltzmann formula

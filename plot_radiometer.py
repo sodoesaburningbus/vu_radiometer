@@ -21,6 +21,7 @@ from glob import glob
 import matplotlib.pyplot as pp
 import netCDF4 as nc
 import numpy as np
+
 from src import plotters
 
 # Locate the most recent netCDF file and grab the date

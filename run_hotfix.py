@@ -51,6 +51,8 @@ import numpy as np
 import netCDF4 as nc
 import torch
 
+from src import tools
+
 ### Load the models
 Tmodel = temp_net()
 Tmodel.load_state_dict(torch.load(Tmodel_weights, weights_only=True))
@@ -103,6 +105,11 @@ heights = fn.createVariable('height', np.float32, ('z'))
 heights.long_name = 'Height above radiometer'
 heights.units = 'km'
 heights[:] = np.array(radiometer_heights)
+
+# PBLH
+pblh_var = fn.createVariable('PBLH', np.float32, ('t'))
+pblh_var.long_name = 'Boundary layer height'
+pblh_var.units = 'km'
 
 # Temperature
 out_temps = fn.createVariable('TEMP', np.float32, ('t','z'))
@@ -158,6 +165,8 @@ for model, var in zip([Tmodel, RHmodel, Lmodel, Vmodel], ['temp', 'rh', 'liquid'
     elif (var == 'liquid'):
         output[output>10.0] = -999
         out_liquid[:,:] = output
+
+pblh_var[:] = tools.compute_pblh(np.array(out_temps), np.array(out_vapor), np.array(radiometer_heights))
 
 # Close the netCDF4 file
 fn.close()

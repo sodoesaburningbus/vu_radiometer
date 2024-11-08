@@ -9,6 +9,7 @@ from datetime import datetime, timedelta
 import matplotlib.pyplot as pp
 import netCDF4 as nc
 import numpy as np
+import pytz
 
 ### Function to plot timeseries of each channels brightness temperature
 ### Inputs:
@@ -92,10 +93,18 @@ def plot_3panel(nc_file, spath, ztop=None, fs=14, fw='bold'):
     rh_unit = fn.variables['RH'].units
     vapor = fn.variables['VAPOR'][:]
     vapor_unit = fn.variables['VAPOR'].units
+    pblh = fn.variables['PBLH'][:]
 
     times = fn.variables['time'][:]
     heights = fn.variables['height'][:]
     date = datetime.strptime(fn.date_created, "%Y-%m-%d %H:%M UTC")
+
+    # Check if DST for time zone conversion
+    localtime = pytz.timezone('US/Central')
+    if (localtime.localize(date).dst()):
+        times -= 5
+    else:
+        times -= 6
 
     # Nan out any data above the desired model top
     if (ztop != None):
@@ -138,11 +147,13 @@ def plot_3panel(nc_file, spath, ztop=None, fs=14, fw='bold'):
 
     axes[2].set_xlim(0,24)
     axes[2].set_title('Vapor Density', fontsize=fs, fontweight=fw, loc='left', ha='left')
-    axes[2].set_xlabel('Hour from Midnight (UTC)', fontsize=fs, fontweight=fw)
+    axes[2].set_xlabel('Hour from Local Midnight', fontsize=fs, fontweight=fw)
 
     for ax in axes.flatten():
         ax.grid()
         ax.set_ylabel('Height (km)', fontsize=fs, fontweight=fw)
+        ax.set_xticks(np.arange(0, 27, 3, dtype='int'))
+        ax.plot(times, pblh, linestyle='--', linewidth=1.2, color='black')
 
     # Adjust y limit if desired
     if (ztop != None):
