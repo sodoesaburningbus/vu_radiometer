@@ -116,13 +116,13 @@ out_rh.long_name = 'Relative Humidity'
 out_rh.units = '%'
 out_rh.missing_value = -999
 
-# Vapor Mixing Ratio
+# Water vapor density
 out_vapor = fn.createVariable('VAPOR', np.float32, ('t','z'))
 out_vapor.long_name = 'Water Vapor Density'
 out_vapor.units = 'g/m3'
 out_vapor.missing_value = -999
 
-# Vapor Mixing Ratio
+# Liquid water density
 out_liquid = fn.createVariable('LIQUID', np.float32, ('t','z'))
 out_liquid.long_name = 'Liquid Water Density'
 out_liquid.units = 'g/m3'
