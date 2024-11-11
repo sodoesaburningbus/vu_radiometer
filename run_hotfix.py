@@ -79,7 +79,7 @@ inputs = np.concatenate((filtered_data1[:,1:5],filtered_data1[:,9:]), axis=1)
 
 ### Create netCDF file for output
 ### Write the new Level 2 data
-fn = nc.Dataset(f"{sdir}/radiometer_{f1.replace('lv1.csv', 'lv2.nc').split('/')[-1]}",'w')
+fn = nc.Dataset(f"{sdir}/{date.year}/radiometer_{f1.replace('lv1.csv', 'lv2.nc').split('/')[-1]}",'w')
 
 # File attributes
 fn.description = 'Thermodynamic profiles from Valparaiso Radiometer with channel instabilities corrected.'
@@ -166,7 +166,7 @@ for model, var in zip([Tmodel, RHmodel, Lmodel, Vmodel], ['temp', 'rh', 'liquid'
         output[output>10.0] = -999
         out_liquid[:,:] = output
 
-pblh_var[:] = tools.compute_pblh(np.array(out_temps), np.array(out_vapor), np.array(radiometer_heights))
+pblh_var[:] = tools.compute_pblh(np.array(out_temps), np.array(out_rh), np.array(radiometer_heights))
 
 # Close the netCDF4 file
 fn.close()

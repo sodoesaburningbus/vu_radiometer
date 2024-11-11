@@ -45,7 +45,7 @@ def filter_level_1(data, sigma=2.5):
     return filtered_data, qc_list
 
 ### This module locates boundary layer height provided radiometer temeprature and water vapor data
-def compute_pblh(temp, vapor, heights):
+def compute_pblh(temp, rh, heights):
 
     # Find the first inversion layer from the surface.
     lapse = temp[:,1:]-temp[:,:-1]
@@ -53,11 +53,14 @@ def compute_pblh(temp, vapor, heights):
     for i in range(temp.shape[0]):
 
         # Find height of lowest inversion
-        pblh_dummy = heights[np.arange(heights.size-1, dtype='int')[lapse[i,:]>0][0]]
+        try:
+            pblh_dummy = heights[np.arange(heights.size-1, dtype='int')[lapse[i,:]>0][0]]
+        except:
+            pblh_dummy = 10.0
 
         # If no inversion exists below 4.5 km (~600 hPa), use the maximum gradient in water vapor
         if (pblh_dummy > 4.5):
-            pblh_dummy = heights[np.nanargmin((vapor[i,1:]-vapor[i,:-1])**2)]
+            pblh_dummy = heights[np.nanargmin((rh[i,1:]-rh[i,:-1])**2)]
 
         pblh.append(pblh_dummy)
 

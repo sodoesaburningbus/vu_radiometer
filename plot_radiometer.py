@@ -25,7 +25,8 @@ import numpy as np
 from src import plotters
 
 # Locate the most recent netCDF file and grab the date
-nc_file = sorted(glob(f'{rdir}/radiometer_*.nc'))[-1]
+date = datetime.utcnow()
+nc_file = sorted(glob(f'{rdir}/{date.year}/radiometer_*.nc'))[-1]
 
 # Make the plots
 plotters.plot_3panel(nc_file, f'{sdir}/radiometer_short_plot.png', ztop=2.5)
