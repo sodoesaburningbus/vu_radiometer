@@ -49,6 +49,7 @@ from datetime import datetime, timedelta
 from glob import glob
 import numpy as np
 import netCDF4 as nc
+import os
 import torch
 
 from src import tools
@@ -67,6 +68,7 @@ Vmodel = rh_net()
 Vmodel.load_state_dict(torch.load(Vmodel_weights, weights_only=True))
 Vmodel.eval()
 
+
 ### Process the Level 1 data into inputs for the model
 # Find the file and read it in
 date = datetime.utcnow()
@@ -76,6 +78,12 @@ data1 = readers.read_level_1(f1)
 # Filter it
 filtered_data1, qc1 = filter(data1, sigma=2.0)
 inputs = np.concatenate((filtered_data1[:,1:5],filtered_data1[:,9:]), axis=1)
+
+### Try to create save directory if necessary
+try:
+    os.system(f'mkdir {sdir}/{date.year}')
+except:
+    pass
 
 ### Create netCDF file for output
 ### Write the new Level 2 data
