@@ -143,6 +143,34 @@ out_liquid.long_name = 'Liquid Water Density'
 out_liquid.units = 'g/m3'
 out_liquid.missing_value = -999
 
+# Ambient temperature
+out_tamb = fn.createVariable('Tamb', np.float32, ('t',))
+out_tamb.long_name = 'Ambient temeperature'
+out_tamb.units = 'K'
+out_tamb.missing_value = -999
+out_tamb[:] = np.array(data1[:,1])
+
+# Ambient pressure
+out_pamb = fn.createVariable('Pamb', np.float32, ('t',))
+out_pamb.long_name = 'Ambient pressure'
+out_pamb.units = 'Pa'
+out_pamb.missing_value = -999
+out_pamb[:] = np.array(data1[:,3])
+
+# Ambient humidity
+out_hamb = fn.createVariable('RHamb', np.float32, ('t',))
+out_hamb.long_name = 'Ambient relative humidity'
+out_hamb.units = '%'
+out_hamb.missing_value = -999
+out_hamb[:] = np.array(data1[:,2])
+
+# The rain flag
+out_rain = fn.createVariable('RAIN', np.float32, ('t',))
+out_rain.long_name = 'Rainfall'
+out_rain.units = 'Boolean'
+out_rain.missing_value = -999
+out_rain[:] = np.array(data1[:,5])
+
 ### Run the models
 # Loop over model types
 for model, var in zip([Tmodel, RHmodel, Lmodel, Vmodel], ['temp', 'rh', 'liquid', 'vapor']):
