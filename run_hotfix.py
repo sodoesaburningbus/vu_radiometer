@@ -153,7 +153,7 @@ out_tamb[:] = np.array(data1[:,1])
 # Ambient pressure
 out_pamb = fn.createVariable('Pamb', np.float32, ('t',))
 out_pamb.long_name = 'Ambient pressure'
-out_pamb.units = 'Pa'
+out_pamb.units = 'hPa'
 out_pamb.missing_value = -999
 out_pamb[:] = np.array(data1[:,3])
 
