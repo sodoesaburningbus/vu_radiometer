@@ -1,6 +1,3 @@
-### This program creates the plots of the Valparaiso radiometer
-### Christopher Phillips
-
 ##### START OPTIONS #####
 
 # Directory with the processed data
@@ -28,7 +25,4 @@ from src import plotters
 date = datetime.utcnow()
 nc_file = sorted(glob(f'{rdir}/{date.year}/radiometer_*.nc'))[-1]
 
-# Make the plots
-plotters.plot_3panel(nc_file, f'{sdir}/radiometer_short_plot.png', ztop=2.5)
-plotters.plot_3panel(nc_file, f'{sdir}/radiometer_tall_plot.png')
-plotters.plot_skewt(nc_file, f'{sdir}/radiometer_skewt.png', fs=12)
+plotters.plot_skewt(nc_file, 'test.png')
